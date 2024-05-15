@@ -8,36 +8,40 @@ class Devs extends React.Component {
         super(props);
 
         this.state = {
-            devs: []
+            devs: [
+                { 'id': 1, 'nome': 'Allan Sousa', 'level': 'Júnior 1' },
+                { 'id': 2, 'nome': 'André Luis', 'level': 'Pleno 3' },
+                { 'id': 3, 'nome': 'André Luis', 'level': 'Pleno 3' },
+                { 'id': 4, 'nome': 'André Luis', 'level': 'Pleno 3' },
+                { 'id': 5, 'nome': 'André Luis', 'level': 'Pleno 3' },
+            ]
         }
     }
 
     render() {
         return (
             <Table striped bordered hover>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nome</th>
-          <th>Nível</th>
-          <th>Opções</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>Allan Sousa</td>
-          <td>Júnior 1</td>
-          <td>Editar  Excluir</td>
-        </tr>
-        <tr>
-          <td>1</td>
-          <td>Allan Sousa</td>
-          <td>Júnior 1</td>
-          <td>Editar  Excluir</td>
-        </tr>
-      </tbody>
-    </Table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Nível</th>
+                        <th>Opções</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        this.state.devs.map((dev) =>
+                            <tr>
+                                <td>{dev.id}</td>
+                                <td>{dev.nome}</td>
+                                <td>{dev.level}</td>
+                                <td>Editar  Excluir</td>
+                            </tr>
+                        )
+                    }
+                </tbody>
+            </Table>
         )
     }
 
