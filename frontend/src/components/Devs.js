@@ -8,14 +8,16 @@ class Devs extends React.Component {
         super(props);
 
         this.state = {
-            devs: [
-                { 'id': 1, 'nome': 'Allan Sousa', 'level': 'Júnior 1' },
-                { 'id': 2, 'nome': 'André Luis', 'level': 'Pleno 3' },
-                { 'id': 3, 'nome': 'André Luis', 'level': 'Pleno 3' },
-                { 'id': 4, 'nome': 'André Luis', 'level': 'Pleno 3' },
-                { 'id': 5, 'nome': 'André Luis', 'level': 'Pleno 3' },
-            ]
+            devs: []
         }
+    }
+
+    componentDidMount(){
+        fetch("http://127.0.0.1:8000/api/v1/devs")
+        .then(response => response.json())
+        .then(response => {
+            this.setState({ devs : response.data})
+        })
     }
 
     render() {
@@ -34,8 +36,8 @@ class Devs extends React.Component {
                         this.state.devs.map((dev) =>
                             <tr>
                                 <td>{dev.id}</td>
-                                <td>{dev.nome}</td>
-                                <td>{dev.level}</td>
+                                <td>{dev.name}</td>
+                                <td>{dev.id_level}</td>
                                 <td>Editar  Excluir</td>
                             </tr>
                         )
