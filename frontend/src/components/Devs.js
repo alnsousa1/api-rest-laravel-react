@@ -2,12 +2,16 @@ import React from "react";
 import { Button, Table, Form } from "react-bootstrap";
 
 class Devs extends React.Component {
-
-    9
     constructor(props) {
         super(props);
 
         this.state = {
+            name: '',
+            id_level: '',
+            sexo: '',
+            data_nascimento: '',
+            idade: '',
+            hobby: '',
             devs: []
         }
     }
@@ -47,11 +51,13 @@ class Devs extends React.Component {
                 <tbody>
                     {
                         this.state.devs.map((dev) =>
-                            <tr>
+                            <tr key={dev.id}>
                                 <td>{dev.id}</td>
                                 <td>{dev.name}</td>
                                 <td>{dev.id_level}</td>
-                                <td>Editar  <Button variant="danger" onClick={() => this.deletarDev(dev.id)}>Excluir</Button></td>
+                                <td>
+                                    Editar  <Button variant="danger" onClick={() => this.deletarDev(dev.id)}>Excluir</Button>
+                                </td>
                             </tr>
                         )
                     }
@@ -60,27 +66,57 @@ class Devs extends React.Component {
         )
     }
 
+    updateField = (field) => (e) => {
+        this.setState({
+            [field]: e.target.value
+        });
+    }
+
     render() {
         return (
             <div>
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" placeholder="Enter email" />
-                        <Form.Text className="text-muted">
-                            We'll never share your email with anyone else.
-                        </Form.Text>
+                        <Form.Label>Nome</Form.Label>
+                        <Form.Control type="text" required placeholder="Digite o nome: " value={this.state.name} onChange={this.updateField('name')} />
                     </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" />
+                    
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Nível</Form.Label>
+                        <Form.Select aria-label="Default select example" value={this.state.id_level} onChange={this.updateField('id_level')}>
+                            <option>Selecione o nível</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </Form.Select>
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                        <Form.Check type="checkbox" label="Check me out" />
+                    
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Sexo</Form.Label>
+                        <Form.Select aria-label="Default select example" value={this.state.sexo} onChange={this.updateField('sexo')} required>
+                            <option>Selecione o sexo</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Feminino</option>
+                        </Form.Select>
                     </Form.Group>
+                    
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Nascimento</Form.Label>
+                        <Form.Control type="date" value={this.state.data_nascimento} onChange={this.updateField('data_nascimento')} required />
+                    </Form.Group>
+                    
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Idade</Form.Label>
+                        <Form.Control type="number" required placeholder="Digite sua idade: " value={this.state.idade} onChange={this.updateField('idade')} />
+                    </Form.Group>
+                    
+                    <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                        <Form.Label>Hobby</Form.Label>
+                        <Form.Control as="textarea" rows={3} placeholder="Nos conte seu hobby:" value={this.state.hobby} onChange={this.updateField('hobby')} />
+                    </Form.Group>
+                    
                     <Button variant="primary" type="submit">
-                        Submit
+                        Cadastrar
                     </Button>
                 </Form>
 
@@ -88,8 +124,6 @@ class Devs extends React.Component {
             </div>
         )
     }
-
-
 }
 
 export default Devs;
