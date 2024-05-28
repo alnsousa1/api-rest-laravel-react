@@ -6,6 +6,7 @@ class Devs extends React.Component {
         super(props);
 
         this.state = {
+            id: 0,
             name: '',
             id_level: '',
             sexo: '',
@@ -57,6 +58,22 @@ class Devs extends React.Component {
             })
     }
 
+    editarDev = (id) => {
+        fetch("http://127.0.0.1:8000/api/v1/devs/" + id, { method: 'GET' })
+            .then(response => response.json())
+            .then(response => {
+                this.setState({ 
+                    id: response.data.id,
+                    name: response.data.name,
+                    id_level: response.data.id_level,
+                    sexo: response.data.sexo,
+                    data_nascimento: response.data.data_nascimento,
+                    idade: response.data.idade,
+                    hobby: response.data.hobby
+                 });
+            })
+    }
+
     cadastrarDev = (dev) => {
         fetch("http://127.0.0.1:8000/api/v1/devs",
             {
@@ -92,7 +109,8 @@ class Devs extends React.Component {
                                 <td>{dev.name}</td>
                                 <td>{dev.level_name}</td>
                                 <td>
-                                    Editar  <Button variant="danger" onClick={() => this.deletarDev(dev.id)}>Excluir</Button>
+                                    <Button variant="primary" onClick={() => this.editarDev(dev.id)}>Editar</Button>
+                                    <Button variant="danger" onClick={() => this.deletarDev(dev.id)}>Excluir</Button>
                                 </td>
                             </tr>
                         )
@@ -124,7 +142,12 @@ class Devs extends React.Component {
     render() {
         return (
             <div>
-                <Form>
+                <Form> 
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>ID:</Form.Label>
+                        <Form.Control type="text" value={this.state.id} readOnly={true} />
+                    </Form.Group>
+
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Nome</Form.Label>
                         <Form.Control type="text" required placeholder="Digite o nome: " value={this.state.name} onChange={this.updateField('name')} />
@@ -164,7 +187,7 @@ class Devs extends React.Component {
                         <Form.Control as="textarea" rows={3} placeholder="Nos conte seu hobby:" value={this.state.hobby} onChange={this.updateField('hobby')} />
                     </Form.Group>
 
-                    <Button variant="primary" type="button" onClick={() => {this.submit()}}>
+                    <Button variant="primary" type="button" onClick={() => { this.submit() }}>
                         Cadastrar
                     </Button>
                 </Form>

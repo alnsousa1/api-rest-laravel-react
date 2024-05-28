@@ -17,7 +17,11 @@ class DevsResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'id_level' => $this->id_level
+            'id_level' => $this->id_level,
+            'sexo' => $this->sexo,
+            'data_nascimento' => $this->data_nascimento,
+            'idade' => $this->idade,
+            'hobby' => $this->hobby
         ];
     }
 }
