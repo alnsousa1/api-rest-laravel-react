@@ -90,6 +90,22 @@ class Devs extends React.Component {
             })
     }
 
+    atualizarDev = (dev) => {
+        fetch("http://127.0.0.1:8000/api/v1/devs/"+dev.id,
+            {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dev)
+            })
+            .then(response => {
+                if (response.ok) {
+                    this.buscarDev();
+                } else {
+                    alert("Não foi possível editar os dados do desenvolvedor!");
+                }
+            })
+    }
+
     renderTabela() {
         return (
             <Table striped bordered hover>
@@ -127,16 +143,42 @@ class Devs extends React.Component {
     }
 
     submit() {
-        const dev = {
-            name: this.state.name,
-            id_level: this.state.id_level,
-            sexo: this.state.sexo,
-            data_nascimento: this.state.data_nascimento,
-            idade: this.state.idade,
-            hobby: this.state.hobby
-        }
 
-        this.cadastrarDev(dev);
+        if(this.state.id == 0){
+            const dev = {
+                name: this.state.name,
+                id_level: this.state.id_level,
+                sexo: this.state.sexo,
+                data_nascimento: this.state.data_nascimento,
+                idade: this.state.idade,
+                hobby: this.state.hobby
+            }
+    
+            this.cadastrarDev(dev);
+        }else{
+            const dev = {
+                id: this.state.id,
+                name: this.state.name,
+                id_level: this.state.id_level,
+                sexo: this.state.sexo,
+                data_nascimento: this.state.data_nascimento,
+                idade: this.state.idade,
+                hobby: this.state.hobby
+            }
+    
+            this.atualizarDev(dev);
+        }
+    }
+    reset = () => {
+        this.setState({
+            id: 0,
+            name: '',
+            id_level: '',
+            sexo: '',
+            data_nascimento: '',
+            idade: '',
+            hobby: ''
+        })
     }
 
     render() {
@@ -189,6 +231,9 @@ class Devs extends React.Component {
 
                     <Button variant="primary" type="button" onClick={() => { this.submit() }}>
                         Cadastrar
+                    </Button>
+                    <Button variant="primary" type="button" onClick={() => { this.reset() }}>
+                        Novo
                     </Button>
                 </Form>
 
