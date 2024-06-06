@@ -201,7 +201,7 @@ class Devs extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="container">
                 <Modal show={this.state.modalOpened} onHide={this.handleClose}>
                     <Modal.Header closeButton>
                         <Modal.Title>Cadastro de Desenvolvedores</Modal.Title>
@@ -209,11 +209,6 @@ class Devs extends React.Component {
                     <Modal.Body>
 
                         <Form>
-                            <Form.Group className="mb-3" controlId="formBasicEmail">
-                                <Form.Label>ID:</Form.Label>
-                                <Form.Control type="text" value={this.state.id} readOnly={true} />
-                            </Form.Group>
-
                             <Form.Group className="mb-3" controlId="formBasicEmail">
                                 <Form.Label>Nome</Form.Label>
                                 <Form.Control type="text" required placeholder="Digite o nome: " value={this.state.name} onChange={this.updateField('name')} />
@@ -256,17 +251,18 @@ class Devs extends React.Component {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleClose}>
-                            Close
+                            Cancelar
                         </Button>
                         <Button variant="primary" type="button" onClick={() => { this.submit() }}>
                             Cadastrar
                         </Button>
                     </Modal.Footer>
                 </Modal>
-
+                <div className="m-2">
                 <Button variant="primary" type="button" onClick={() => { this.reset() }}>
                     Novo
                 </Button>
+                </div>
 
                 {this.renderTabela()}
             </div>

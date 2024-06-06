@@ -97,8 +97,8 @@ class Levels extends React.Component {
                                 <td>{level.id}</td>
                                 <td>{level.name}</td>
                                 <td>
-                                    <Button variant="primary" onClick={() => this.editarLevel(level.id)}>Editar</Button>
-                                    <Button variant="danger" onClick={() => this.deletarLevel(level.id)}>Excluir</Button>
+                                    <Button className="m-2" style={{float: "right"}} variant="primary" onClick={() => this.editarLevel(level.id)}>Editar</Button>
+                                    <Button style={{float: "right"}} variant="danger" onClick={() => this.deletarLevel(level.id)}>Excluir</Button>
                                 </td>
                             </tr>
                         )
@@ -154,7 +154,7 @@ class Levels extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="container">
                 <Modal show={this.state.modalOpened} onHide={this.handleClose}>
                     <Modal.Header closeButton>
                         <Modal.Title>Cadastro de Desenvolvedores</Modal.Title>
@@ -169,17 +169,18 @@ class Levels extends React.Component {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleClose}>
-                            Close
+                            Cancelar
                         </Button>
                         <Button variant="primary" type="button" onClick={() => { this.submit() }}>
                             Cadastrar
                         </Button>
                     </Modal.Footer>
                 </Modal>
-
+                <div className="m-2">
                 <Button variant="primary" type="button" onClick={() => { this.reset() }}>
                     Novo
                 </Button>
+                </div>
 
                 {this.renderTabela()}
             </div>
