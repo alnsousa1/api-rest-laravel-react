@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Table, Form } from "react-bootstrap";
+import { Button, Table, Form, Modal } from "react-bootstrap";
 
 class Devs extends React.Component {
     constructor(props) {
@@ -14,7 +14,8 @@ class Devs extends React.Component {
             idade: '',
             hobby: '',
             devs: [],
-            levels: []
+            levels: [],
+            modalOpened: false
         }
     }
 
@@ -62,7 +63,7 @@ class Devs extends React.Component {
         fetch("http://127.0.0.1:8000/api/v1/devs/" + id, { method: 'GET' })
             .then(response => response.json())
             .then(response => {
-                this.setState({ 
+                this.setState({
                     id: response.data.id,
                     name: response.data.name,
                     id_level: response.data.id_level,
@@ -70,7 +71,8 @@ class Devs extends React.Component {
                     data_nascimento: response.data.data_nascimento,
                     idade: response.data.idade,
                     hobby: response.data.hobby
-                 });
+                });
+                this.openModal();
             })
     }
 
@@ -91,7 +93,7 @@ class Devs extends React.Component {
     }
 
     atualizarDev = (dev) => {
-        fetch("http://127.0.0.1:8000/api/v1/devs/"+dev.id,
+        fetch("http://127.0.0.1:8000/api/v1/devs/" + dev.id,
             {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -144,7 +146,7 @@ class Devs extends React.Component {
 
     submit() {
 
-        if(this.state.id == 0){
+        if (this.state.id == 0) {
             const dev = {
                 name: this.state.name,
                 id_level: this.state.id_level,
@@ -153,9 +155,9 @@ class Devs extends React.Component {
                 idade: this.state.idade,
                 hobby: this.state.hobby
             }
-    
+
             this.cadastrarDev(dev);
-        }else{
+        } else {
             const dev = {
                 id: this.state.id,
                 name: this.state.name,
@@ -165,10 +167,13 @@ class Devs extends React.Component {
                 idade: this.state.idade,
                 hobby: this.state.hobby
             }
-    
+
             this.atualizarDev(dev);
         }
+        this.handleClose();
     }
+
+
     reset = () => {
         this.setState({
             id: 0,
@@ -179,63 +184,89 @@ class Devs extends React.Component {
             idade: '',
             hobby: ''
         })
+        this.openModal();
+    }
+
+    handleClose = () => {
+        this.setState({
+            modalOpened: false
+        })
+    }
+
+    openModal = () => {
+        this.setState({
+            modalOpened: true
+        })
     }
 
     render() {
         return (
             <div>
-                <Form> 
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>ID:</Form.Label>
-                        <Form.Control type="text" value={this.state.id} readOnly={true} />
-                    </Form.Group>
+                <Modal show={this.state.modalOpened} onHide={this.handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Cadastro de Desenvolvedores</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
 
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Nome</Form.Label>
-                        <Form.Control type="text" required placeholder="Digite o nome: " value={this.state.name} onChange={this.updateField('name')} />
-                    </Form.Group>
+                        <Form>
+                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                <Form.Label>ID:</Form.Label>
+                                <Form.Control type="text" value={this.state.id} readOnly={true} />
+                            </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Nível</Form.Label>
-                        <Form.Select aria-label="Default select example" value={this.state.id_level} onChange={this.updateField('id_level')}>
-                            <option>Selecione o nível</option>
-                            {this.state.levels.map(level => (
-                                <option key={level.id} value={level.id}>{level.name}</option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
+                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                <Form.Label>Nome</Form.Label>
+                                <Form.Control type="text" required placeholder="Digite o nome: " value={this.state.name} onChange={this.updateField('name')} />
+                            </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Sexo</Form.Label>
-                        <Form.Select aria-label="Default select example" value={this.state.sexo} onChange={this.updateField('sexo')} required>
-                            <option>Selecione o sexo</option>
-                            <option value="M">Masculino</option>
-                            <option value="F">Feminino</option>
-                        </Form.Select>
-                    </Form.Group>
+                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                <Form.Label>Nível</Form.Label>
+                                <Form.Select aria-label="Default select example" value={this.state.id_level} onChange={this.updateField('id_level')}>
+                                    <option>Selecione o nível</option>
+                                    {this.state.levels.map(level => (
+                                        <option key={level.id} value={level.id}>{level.name}</option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Nascimento</Form.Label>
-                        <Form.Control type="date" value={this.state.data_nascimento} onChange={this.updateField('data_nascimento')} required />
-                    </Form.Group>
+                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                <Form.Label>Sexo</Form.Label>
+                                <Form.Select aria-label="Default select example" value={this.state.sexo} onChange={this.updateField('sexo')} required>
+                                    <option>Selecione o sexo</option>
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Feminino</option>
+                                </Form.Select>
+                            </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Idade</Form.Label>
-                        <Form.Control type="number" required placeholder="Digite sua idade: " value={this.state.idade} onChange={this.updateField('idade')} />
-                    </Form.Group>
+                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                <Form.Label>Nascimento</Form.Label>
+                                <Form.Control type="date" value={this.state.data_nascimento} onChange={this.updateField('data_nascimento')} required />
+                            </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                        <Form.Label>Hobby</Form.Label>
-                        <Form.Control as="textarea" rows={3} placeholder="Nos conte seu hobby:" value={this.state.hobby} onChange={this.updateField('hobby')} />
-                    </Form.Group>
+                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                <Form.Label>Idade</Form.Label>
+                                <Form.Control type="number" required placeholder="Digite sua idade: " value={this.state.idade} onChange={this.updateField('idade')} />
+                            </Form.Group>
 
-                    <Button variant="primary" type="button" onClick={() => { this.submit() }}>
-                        Cadastrar
-                    </Button>
-                    <Button variant="primary" type="button" onClick={() => { this.reset() }}>
-                        Novo
-                    </Button>
-                </Form>
+                            <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                                <Form.Label>Hobby</Form.Label>
+                                <Form.Control as="textarea" rows={3} placeholder="Nos conte seu hobby:" value={this.state.hobby} onChange={this.updateField('hobby')} />
+                            </Form.Group>
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.handleClose}>
+                            Close
+                        </Button>
+                        <Button variant="primary" type="button" onClick={() => { this.submit() }}>
+                            Cadastrar
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Button variant="primary" type="button" onClick={() => { this.reset() }}>
+                    Novo
+                </Button>
 
                 {this.renderTabela()}
             </div>
