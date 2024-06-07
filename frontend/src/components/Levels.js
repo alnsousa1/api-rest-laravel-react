@@ -24,56 +24,80 @@ class Levels extends React.Component {
                 const levels = response.data.map(level => ({
                     ...level
                 }));
+                levels.sort((a, b) => a.name.localeCompare(b.name));
                 this.setState({ levels });
             })
     }
 
     deletarLevel = (id) => {
-        Swal.fire({
-            title: 'Você tem certeza?',
-            text: "Você não poderá reverter isso!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sim, excluir!',
-            cancelButtonText: 'Não, cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch("http://127.0.0.1:8000/api/v1/levels/" + id, { method: 'DELETE' })
-                    .then(response => {
-                        if (response.ok) {
+        // Primeiro, buscar os desenvolvedores para verificar se algum possui o id_level
+        fetch("http://127.0.0.1:8000/api/v1/devs")
+            .then(response => response.json())
+            .then(response => {
+                const devs = response.data;
+                const devsWithLevel = devs.filter(dev => dev.id_level === id);
+
+                if (devsWithLevel.length > 0) {
+                    Swal.fire({
+                        title: 'Erro!',
+                        text: 'Não é possível excluir este nível porque existem desenvolvedores associados a ele.',
+                        icon: 'error'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Você tem certeza?',
+                        text: "Você não poderá reverter isso!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sim, excluir!',
+                        cancelButtonText: 'Não, cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch("http://127.0.0.1:8000/api/v1/levels/" + id, { method: 'DELETE' })
+                                .then(response => {
+                                    if (response.ok) {
+                                        Swal.fire(
+                                            'Excluído!',
+                                            'O nível foi excluído.',
+                                            'success'
+                                        );
+                                        this.buscarLevels();
+                                    } else {
+                                        Swal.fire(
+                                            'Erro!',
+                                            'Houve um problema ao excluir o nível.',
+                                            'error'
+                                        );
+                                    }
+                                })
+                                .catch(error => {
+                                    Swal.fire(
+                                        'Erro!',
+                                        'Houve um problema ao excluir o nível.',
+                                        'error'
+                                    );
+                                });
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
                             Swal.fire(
-                                'Excluído!',
-                                'O desenvolvedor foi excluído.',
-                                'success'
-                            );
-                            this.buscarLevels();
-                        } else {
-                            Swal.fire(
-                                'Erro!',
-                                'Houve um problema ao excluir o nível.',
+                                'Cancelado',
+                                'O nível está seguro :)',
                                 'error'
                             );
                         }
-                    })
-                    .catch(error => {
-                        Swal.fire(
-                            'Erro!',
-                            'Houve um problema ao excluir o nível.',
-                            'error'
-                        );
                     });
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                }
+            })
+            .catch(error => {
                 Swal.fire(
-                    'Cancelado',
-                    'O desenvolvedor está seguro :)',
+                    'Erro!',
+                    'Houve um problema ao verificar os desenvolvedores.',
                     'error'
                 );
-            }
-        });
-
+            });
     };
+
 
     editarLevel = (id) => {
         fetch("http://127.0.0.1:8000/api/v1/levels/" + id, { method: 'GET' })

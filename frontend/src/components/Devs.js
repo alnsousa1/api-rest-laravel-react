@@ -42,6 +42,7 @@ class Devs extends React.Component {
                     ...dev,
                     level_name: this.findLevelName(dev.id_level)
                 }));
+                devs.sort((a, b) => a.name.localeCompare(b.name));
                 this.setState({ devs });
             })
     }
