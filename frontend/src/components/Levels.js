@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Table, Form, Modal } from "react-bootstrap";
+import Swal from 'sweetalert2';
 
 class Levels extends React.Component {
     constructor(props) {
@@ -28,13 +29,51 @@ class Levels extends React.Component {
     }
 
     deletarLevel = (id) => {
-        fetch("http://127.0.0.1:8000/api/v1/levels/" + id, { method: 'DELETE' })
-            .then(response => {
-                if (response.ok) {
-                    this.buscarLevels();
-                }
-            })
-    }
+        Swal.fire({
+            title: 'Você tem certeza?',
+            text: "Você não poderá reverter isso!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Não, cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch("http://127.0.0.1:8000/api/v1/levels/" + id, { method: 'DELETE' })
+                    .then(response => {
+                        if (response.ok) {
+                            Swal.fire(
+                                'Excluído!',
+                                'O desenvolvedor foi excluído.',
+                                'success'
+                            );
+                            this.buscarLevels();
+                        } else {
+                            Swal.fire(
+                                'Erro!',
+                                'Houve um problema ao excluir o nível.',
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire(
+                            'Erro!',
+                            'Houve um problema ao excluir o nível.',
+                            'error'
+                        );
+                    });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire(
+                    'Cancelado',
+                    'O desenvolvedor está seguro :)',
+                    'error'
+                );
+            }
+        });
+
+    };
 
     editarLevel = (id) => {
         fetch("http://127.0.0.1:8000/api/v1/levels/" + id, { method: 'GET' })
@@ -57,6 +96,11 @@ class Levels extends React.Component {
             })
             .then(response => {
                 if (response.ok) {
+                    Swal.fire({
+                        title: "Sucesso!",
+                        text: "O nível foi cadastrado com sucesso!",
+                        icon: "success"
+                    });
                     this.buscarLevels();
                 } else {
                     alert("Não foi possível cadastrar este nível!");
@@ -73,6 +117,11 @@ class Levels extends React.Component {
             })
             .then(response => {
                 if (response.ok) {
+                    Swal.fire({
+                        title: "Sucesso!",
+                        text: "Os dados foram atualizados com sucesso!",
+                        icon: "success"
+                    });
                     this.buscarLevels();
                 } else {
                     alert("Não foi possível editar os dados deste nível!");
@@ -87,7 +136,7 @@ class Levels extends React.Component {
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
-                        <th style={{float: "right"}}>Opções</th>
+                        <th style={{ float: "right" }}>Opções</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -97,8 +146,8 @@ class Levels extends React.Component {
                                 <td>{level.id}</td>
                                 <td>{level.name}</td>
                                 <td>
-                                    <Button style={{float: "right"}} variant="primary" onClick={() => this.editarLevel(level.id)}>Editar</Button>
-                                    <Button style={{float: "right", marginRight: "10px"}} variant="danger" onClick={() => this.deletarLevel(level.id)}>Excluir</Button>
+                                    <Button style={{ float: "right" }} variant="primary" onClick={() => this.editarLevel(level.id)}>Editar</Button>
+                                    <Button style={{ float: "right", marginRight: "10px" }} variant="danger" onClick={() => this.deletarLevel(level.id)}>Excluir</Button>
                                 </td>
                             </tr>
                         )
@@ -177,9 +226,9 @@ class Levels extends React.Component {
                     </Modal.Footer>
                 </Modal>
                 <div className="m-2">
-                <Button variant="primary" type="button" onClick={() => { this.reset() }}>
-                    Novo
-                </Button>
+                    <Button variant="primary" type="button" onClick={() => { this.reset() }}>
+                        Novo
+                    </Button>
                 </div>
 
                 {this.renderTabela()}
