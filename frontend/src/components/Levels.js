@@ -7,8 +7,10 @@ class Levels extends React.Component {
         super(props);
 
         this.state = {
+            searchQuery: '',
             name: '',
             levels: [],
+            filteredLevels: [],
             developers: [],
             modalOpened: false,
             currentPage: 1,
@@ -25,11 +27,8 @@ class Levels extends React.Component {
         fetch("http://127.0.0.1:8000/api/v1/levels")
             .then(response => response.json())
             .then(response => {
-                const levels = response.data.map(level => ({
-                    ...level
-                }));
-                levels.sort((a, b) => a.name.localeCompare(b.name));
-                this.setState({ levels });
+                const levels = response.data.sort((a, b) => a.name.localeCompare(b.name));
+                this.setState({ levels, filteredLevels: levels });
             })
     }
 
@@ -47,7 +46,6 @@ class Levels extends React.Component {
     }
 
     deletarLevel = (id) => {
-        // Primeiro, buscar os desenvolvedores para verificar se algum possui o id_level
         fetch("http://127.0.0.1:8000/api/v1/devs")
             .then(response => response.json())
             .then(response => {
@@ -55,14 +53,12 @@ class Levels extends React.Component {
                 const devsWithLevel = devs.filter(dev => dev.id_level === id);
 
                 if (devsWithLevel.length > 0) {
-                    // Exibir alerta se houver desenvolvedores associados a este nível
                     Swal.fire({
                         title: 'Erro!',
                         text: 'Não é possível excluir este nível porque existem desenvolvedores associados a ele.',
                         icon: 'error'
                     });
                 } else {
-                    // Proceder com a exclusão se não houver desenvolvedores associados a este nível
                     Swal.fire({
                         title: 'Você tem certeza?',
                         text: "Você não poderá reverter isso!",
@@ -171,14 +167,27 @@ class Levels extends React.Component {
             })
     }
 
+    handleSearch = (e) => {
+        const query = e.target.value.toLowerCase();
+        this.setState({ searchQuery: query }, () => {
+            const filteredLevels = this.state.levels.filter(level => 
+                level.name.toLowerCase().includes(this.state.searchQuery)
+            );
+            this.setState({ filteredLevels });
+        });
+    }
+
     renderTabela() {
-        const { levels, currentPage, levelsPerPage } = this.state;
+        const { filteredLevels, currentPage, levelsPerPage } = this.state;
         const indexOfLastLevel = currentPage * levelsPerPage;
         const indexOfFirstLevel = indexOfLastLevel - levelsPerPage;
-        const currentLevels = levels.slice(indexOfFirstLevel, indexOfLastLevel);
+        const currentLevels = filteredLevels.slice(indexOfFirstLevel, indexOfLastLevel);
 
         return (
             <div>
+                <Form.Group className="mb-3" controlId="searchLevels">
+                    <Form.Control type="text" placeholder="Buscar níveis" value={this.state.searchQuery} onChange={this.handleSearch} />
+                </Form.Group>
                 <Table striped bordered hover>
                     <thead>
                         <tr>
@@ -210,9 +219,9 @@ class Levels extends React.Component {
     }
 
     renderPagination = () => {
-        const { levels, currentPage, levelsPerPage } = this.state;
+        const { filteredLevels, currentPage, levelsPerPage } = this.state;
         const pageNumbers = [];
-        for (let i = 1; i <= Math.ceil(levels.length / levelsPerPage); i++) {
+        for (let i = 1; i <= Math.ceil(filteredLevels.length / levelsPerPage); i++) {
             pageNumbers.push(i);
         }
 

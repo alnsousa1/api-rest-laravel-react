@@ -14,7 +14,9 @@ class Devs extends React.Component {
             data_nascimento: '',
             idade: '',
             hobby: '',
+            searchQuery: '',
             devs: [],
+            filteredDevs: [],
             levels: [],
             modalOpened: false,
             currentPage: 1,
@@ -46,7 +48,7 @@ class Devs extends React.Component {
                     level_name: this.findLevelName(dev.id_level)
                 }));
                 devs.sort((a, b) => a.name.localeCompare(b.name));
-                this.setState({ devs });
+                this.setState({ devs, filteredDevs: devs });
             })
     }
 
@@ -160,14 +162,27 @@ class Devs extends React.Component {
             })
     }
 
+    handleSearch = (e) => {
+        const query = e.target.value.toLowerCase();
+        this.setState({ searchQuery: query }, () => {
+            const filteredDevs = this.state.devs.filter(dev =>
+                dev.name.toLowerCase().includes(this.state.searchQuery)
+            );
+            this.setState({ filteredDevs });
+        });
+    }
+
     renderTabela() {
-        const { devs, currentPage, devsPerPage } = this.state;
+        const { filteredDevs, currentPage, devsPerPage } = this.state;
         const indexOfLastDev = currentPage * devsPerPage;
         const indexOfFirstDev = indexOfLastDev - devsPerPage;
-        const currentDevs = devs.slice(indexOfFirstDev, indexOfLastDev);
+        const currentDevs = filteredDevs.slice(indexOfFirstDev, indexOfLastDev);
 
         return (
             <div>
+                <Form.Group className="mb-3" controlId="searchDevs">
+                    <Form.Control type="text" placeholder="Buscar desenvolvedores" value={this.state.searchQuery} onChange={this.handleSearch} />
+                </Form.Group>
                 <Table striped bordered hover responsive>
                     <thead>
                         <tr>
@@ -199,9 +214,9 @@ class Devs extends React.Component {
     }
 
     renderPagination = () => {
-        const { devs, currentPage, devsPerPage } = this.state;
+        const { filteredDevs, currentPage, devsPerPage } = this.state;
         const pageNumbers = [];
-        for (let i = 1; i <= Math.ceil(devs.length / devsPerPage); i++) {
+        for (let i = 1; i <= Math.ceil(filteredDevs.length / devsPerPage); i++) {
             pageNumbers.push(i);
         }
 
@@ -231,7 +246,7 @@ class Devs extends React.Component {
     }
 
     submit() {
-        if (this.state.id == 0) {
+        if (this.state.id === 0) {
             const dev = {
                 name: this.state.name,
                 id_level: this.state.id_level,
@@ -289,7 +304,6 @@ class Devs extends React.Component {
                         <Modal.Title>Cadastro de Desenvolvedores</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-
                         <Form>
                             <Form.Group className="mb-3" controlId="formBasicEmail">
                                 <Form.Label>Nome</Form.Label>
