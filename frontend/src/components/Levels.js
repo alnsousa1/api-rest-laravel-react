@@ -9,12 +9,14 @@ class Levels extends React.Component {
         this.state = {
             name: '',
             levels: [],
+            developers: [],
             modalOpened: false
         }
     }
 
     componentDidMount() {
         this.buscarLevels();
+        this.buscarDevelopers();
     }
 
     buscarLevels = () => {
@@ -29,6 +31,19 @@ class Levels extends React.Component {
             })
     }
 
+    buscarDevelopers = () => {
+        fetch("http://127.0.0.1:8000/api/v1/devs")
+            .then(response => response.json())
+            .then(response => {
+                this.setState({ developers: response.data });
+            })
+    }
+
+    contarDevsPorNivel = (levelId) => {
+        const { developers } = this.state;
+        return developers.filter(dev => dev.id_level === levelId).length;
+    }
+
     deletarLevel = (id) => {
         // Primeiro, buscar os desenvolvedores para verificar se algum possui o id_level
         fetch("http://127.0.0.1:8000/api/v1/devs")
@@ -38,12 +53,14 @@ class Levels extends React.Component {
                 const devsWithLevel = devs.filter(dev => dev.id_level === id);
 
                 if (devsWithLevel.length > 0) {
+                    // Exibir alerta se houver desenvolvedores associados a este nível
                     Swal.fire({
                         title: 'Erro!',
                         text: 'Não é possível excluir este nível porque existem desenvolvedores associados a ele.',
                         icon: 'error'
                     });
                 } else {
+                    // Proceder com a exclusão se não houver desenvolvedores associados a este nível
                     Swal.fire({
                         title: 'Você tem certeza?',
                         text: "Você não poderá reverter isso!",
@@ -97,7 +114,6 @@ class Levels extends React.Component {
                 );
             });
     };
-
 
     editarLevel = (id) => {
         fetch("http://127.0.0.1:8000/api/v1/levels/" + id, { method: 'GET' })
@@ -160,6 +176,7 @@ class Levels extends React.Component {
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
+                        <th>Quantidade de Desenvolvedores</th>
                         <th style={{ float: "right" }}>Opções</th>
                     </tr>
                 </thead>
@@ -169,6 +186,7 @@ class Levels extends React.Component {
                             <tr key={level.id}>
                                 <td>{level.id}</td>
                                 <td>{level.name}</td>
+                                <td>{this.contarDevsPorNivel(level.id)}</td>
                                 <td>
                                     <Button style={{ float: "right" }} variant="primary" onClick={() => this.editarLevel(level.id)}>Editar</Button>
                                     <Button style={{ float: "right", marginRight: "10px" }} variant="danger" onClick={() => this.deletarLevel(level.id)}>Excluir</Button>
@@ -188,8 +206,7 @@ class Levels extends React.Component {
     }
 
     submit() {
-
-        if (this.state.id == 0) {
+        if (this.state.id === 0) {
             const level = {
                 name: this.state.name,
             }
@@ -224,13 +241,12 @@ class Levels extends React.Component {
         })
     }
 
-
     render() {
         return (
             <div className="container">
                 <Modal show={this.state.modalOpened} onHide={this.handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Cadastro de Desenvolvedores</Modal.Title>
+                        <Modal.Title>Cadastro de Níveis</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
