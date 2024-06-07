@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Table, Form, Modal } from "react-bootstrap";
+import { Button, Table, Form, Modal, Pagination } from "react-bootstrap";
 import Swal from 'sweetalert2';
 
 class Devs extends React.Component {
@@ -16,7 +16,9 @@ class Devs extends React.Component {
             hobby: '',
             devs: [],
             levels: [],
-            modalOpened: false
+            modalOpened: false,
+            currentPage: 1,
+            devsPerPage: 10
         }
     }
 
@@ -28,7 +30,8 @@ class Devs extends React.Component {
         fetch("http://127.0.0.1:8000/api/v1/levels")
             .then(response => response.json())
             .then(response => {
-                this.setState({ levels: response.data }, () => {
+                const levels = response.data.sort((a, b) => a.name.localeCompare(b.name));
+                this.setState({ levels }, () => {
                     this.buscarDev();
                 });
             })
@@ -158,33 +161,67 @@ class Devs extends React.Component {
     }
 
     renderTabela() {
+        const { devs, currentPage, devsPerPage } = this.state;
+        const indexOfLastDev = currentPage * devsPerPage;
+        const indexOfFirstDev = indexOfLastDev - devsPerPage;
+        const currentDevs = devs.slice(indexOfFirstDev, indexOfLastDev);
+
         return (
-            <Table striped bordered hover responsive>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Nível</th>
-                        <th style={{ float: "right" }}>Opções</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        this.state.devs.map((dev) =>
-                            <tr key={dev.id}>
-                                <td>{dev.id}</td>
-                                <td>{dev.name}</td>
-                                <td>{dev.level_name}</td>
-                                <td>
-                                    <Button style={{ float: "right" }} variant="primary" onClick={() => this.editarDev(dev.id)}>Editar</Button>
-                                    <Button style={{ float: "right", marginRight: "10px" }} variant="danger" onClick={() => this.deletarDev(dev.id)}>Excluir</Button>
-                                </td>
-                            </tr>
-                        )
-                    }
-                </tbody>
-            </Table>
+            <div>
+                <Table striped bordered hover responsive>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Nível</th>
+                            <th style={{ float: "right" }}>Opções</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            currentDevs.map((dev) =>
+                                <tr key={dev.id}>
+                                    <td>{dev.id}</td>
+                                    <td>{dev.name}</td>
+                                    <td>{dev.level_name}</td>
+                                    <td>
+                                        <Button style={{ float: "right" }} variant="primary" onClick={() => this.editarDev(dev.id)}>Editar</Button>
+                                        <Button style={{ float: "right", marginRight: "10px" }} variant="danger" onClick={() => this.deletarDev(dev.id)}>Excluir</Button>
+                                    </td>
+                                </tr>
+                            )
+                        }
+                    </tbody>
+                </Table>
+                {this.renderPagination()}
+            </div>
         )
+    }
+
+    renderPagination = () => {
+        const { devs, currentPage, devsPerPage } = this.state;
+        const pageNumbers = [];
+        for (let i = 1; i <= Math.ceil(devs.length / devsPerPage); i++) {
+            pageNumbers.push(i);
+        }
+
+        return (
+            <Pagination>
+                <Pagination.First onClick={() => this.setPage(1)} disabled={currentPage === 1} />
+                <Pagination.Prev onClick={() => this.setPage(currentPage - 1)} disabled={currentPage === 1} />
+                {pageNumbers.map(number => (
+                    <Pagination.Item key={number} active={number === currentPage} onClick={() => this.setPage(number)}>
+                        {number}
+                    </Pagination.Item>
+                ))}
+                <Pagination.Next onClick={() => this.setPage(currentPage + 1)} disabled={currentPage === pageNumbers.length} />
+                <Pagination.Last onClick={() => this.setPage(pageNumbers.length)} disabled={currentPage === pageNumbers.length} />
+            </Pagination>
+        );
+    }
+
+    setPage = (pageNumber) => {
+        this.setState({ currentPage: pageNumber });
     }
 
     updateField = (field) => (e) => {
@@ -194,7 +231,6 @@ class Devs extends React.Component {
     }
 
     submit() {
-
         if (this.state.id == 0) {
             const dev = {
                 name: this.state.name,
@@ -204,7 +240,6 @@ class Devs extends React.Component {
                 idade: this.state.idade,
                 hobby: this.state.hobby
             }
-
             this.cadastrarDev(dev);
         } else {
             const dev = {
@@ -216,12 +251,10 @@ class Devs extends React.Component {
                 idade: this.state.idade,
                 hobby: this.state.hobby
             }
-
             this.atualizarDev(dev);
         }
         this.handleClose();
     }
-
 
     reset = () => {
         this.setState({

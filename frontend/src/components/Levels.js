@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Table, Form, Modal } from "react-bootstrap";
+import { Button, Table, Form, Modal, Pagination } from "react-bootstrap";
 import Swal from 'sweetalert2';
 
 class Levels extends React.Component {
@@ -10,7 +10,9 @@ class Levels extends React.Component {
             name: '',
             levels: [],
             developers: [],
-            modalOpened: false
+            modalOpened: false,
+            currentPage: 1,
+            levelsPerPage: 10
         }
     }
 
@@ -170,33 +172,67 @@ class Levels extends React.Component {
     }
 
     renderTabela() {
+        const { levels, currentPage, levelsPerPage } = this.state;
+        const indexOfLastLevel = currentPage * levelsPerPage;
+        const indexOfFirstLevel = indexOfLastLevel - levelsPerPage;
+        const currentLevels = levels.slice(indexOfFirstLevel, indexOfLastLevel);
+
         return (
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Quantidade de Desenvolvedores</th>
-                        <th style={{ float: "right" }}>Opções</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        this.state.levels.map((level) =>
-                            <tr key={level.id}>
-                                <td>{level.id}</td>
-                                <td>{level.name}</td>
-                                <td>{this.contarDevsPorNivel(level.id)}</td>
-                                <td>
-                                    <Button style={{ float: "right" }} variant="primary" onClick={() => this.editarLevel(level.id)}>Editar</Button>
-                                    <Button style={{ float: "right", marginRight: "10px" }} variant="danger" onClick={() => this.deletarLevel(level.id)}>Excluir</Button>
-                                </td>
-                            </tr>
-                        )
-                    }
-                </tbody>
-            </Table>
+            <div>
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Quantidade de Desenvolvedores</th>
+                            <th style={{ float: "right" }}>Opções</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            currentLevels.map((level) =>
+                                <tr key={level.id}>
+                                    <td>{level.id}</td>
+                                    <td>{level.name}</td>
+                                    <td>{this.contarDevsPorNivel(level.id)}</td>
+                                    <td>
+                                        <Button style={{ float: "right" }} variant="primary" onClick={() => this.editarLevel(level.id)}>Editar</Button>
+                                        <Button style={{ float: "right", marginRight: "10px" }} variant="danger" onClick={() => this.deletarLevel(level.id)}>Excluir</Button>
+                                    </td>
+                                </tr>
+                            )
+                        }
+                    </tbody>
+                </Table>
+                {this.renderPagination()}
+            </div>
         )
+    }
+
+    renderPagination = () => {
+        const { levels, currentPage, levelsPerPage } = this.state;
+        const pageNumbers = [];
+        for (let i = 1; i <= Math.ceil(levels.length / levelsPerPage); i++) {
+            pageNumbers.push(i);
+        }
+
+        return (
+            <Pagination>
+                <Pagination.First onClick={() => this.setPage(1)} disabled={currentPage === 1} />
+                <Pagination.Prev onClick={() => this.setPage(currentPage - 1)} disabled={currentPage === 1} />
+                {pageNumbers.map(number => (
+                    <Pagination.Item key={number} active={number === currentPage} onClick={() => this.setPage(number)}>
+                        {number}
+                    </Pagination.Item>
+                ))}
+                <Pagination.Next onClick={() => this.setPage(currentPage + 1)} disabled={currentPage === pageNumbers.length} />
+                <Pagination.Last onClick={() => this.setPage(pageNumbers.length)} disabled={currentPage === pageNumbers.length} />
+            </Pagination>
+        );
+    }
+
+    setPage = (pageNumber) => {
+        this.setState({ currentPage: pageNumber });
     }
 
     updateField = (field) => (e) => {
