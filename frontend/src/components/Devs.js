@@ -20,7 +20,9 @@ class Devs extends React.Component {
             levels: [],
             modalOpened: false,
             currentPage: 1,
-            devsPerPage: 10
+            devsPerPage: 10,
+            sortBy: 'name',
+            sortOrder: 'asc'
         }
     }
 
@@ -172,11 +174,42 @@ class Devs extends React.Component {
         });
     }
 
+    sortColumn = (column) => {
+        const { sortBy, sortOrder } = this.state;
+    
+        if (column === sortBy) {
+            this.setState({ sortOrder: sortOrder === 'asc' ? 'desc' : 'asc' });
+        } else {
+            if (column === 'name') {
+                this.setState({ sortBy: column, sortOrder: 'asc' }, () => {
+                    this.setState(prevState => ({
+                        devs: prevState.devs.sort((a, b) => {
+                            if (a.name === b.name) {
+                                return sortOrder === 'asc' ? new Date(b.createdAt) - new Date(a.createdAt) : new Date(a.createdAt) - new Date(b.createdAt);
+                            }
+                            return sortOrder === 'asc' ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name);
+                        })
+                    }));
+                });
+            } else {
+                this.setState({ sortBy: column, sortOrder: 'asc' });
+            }
+        }
+    };
+    
     renderTabela() {
-        const { filteredDevs, currentPage, devsPerPage } = this.state;
+        const { filteredDevs, currentPage, devsPerPage, sortBy, sortOrder } = this.state;
         const indexOfLastDev = currentPage * devsPerPage;
         const indexOfFirstDev = indexOfLastDev - devsPerPage;
-        const currentDevs = filteredDevs.slice(indexOfFirstDev, indexOfLastDev);
+        let currentDevs = filteredDevs.slice(indexOfFirstDev, indexOfLastDev);
+
+        currentDevs.sort((a, b) => {
+            if (sortBy === 'name') {
+                return sortOrder === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+            } else if (sortBy === 'createdAt') {
+                return sortOrder === 'asc' ? new Date(a.createdAt) - new Date(b.createdAt) : new Date(b.createdAt) - new Date(a.createdAt);
+            }
+        });
 
         return (
             <div>
@@ -187,7 +220,7 @@ class Devs extends React.Component {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nome</th>
+                            <th onClick={() => this.sortColumn('name')}>Nome</th>
                             <th>Nível</th>
                             <th style={{ float: "right" }}>Opções</th>
                         </tr>
