@@ -87,7 +87,7 @@ class Levels extends React.Component {
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
-                        <th>Opções</th>
+                        <th style={{float: "right"}}>Opções</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -97,8 +97,8 @@ class Levels extends React.Component {
                                 <td>{level.id}</td>
                                 <td>{level.name}</td>
                                 <td>
-                                    <Button className="m-2" style={{float: "right"}} variant="primary" onClick={() => this.editarLevel(level.id)}>Editar</Button>
-                                    <Button style={{float: "right"}} variant="danger" onClick={() => this.deletarLevel(level.id)}>Excluir</Button>
+                                    <Button style={{float: "right"}} variant="primary" onClick={() => this.editarLevel(level.id)}>Editar</Button>
+                                    <Button style={{float: "right", marginRight: "10px"}} variant="danger" onClick={() => this.deletarLevel(level.id)}>Excluir</Button>
                                 </td>
                             </tr>
                         )
@@ -172,7 +172,7 @@ class Levels extends React.Component {
                             Cancelar
                         </Button>
                         <Button variant="primary" type="button" onClick={() => { this.submit() }}>
-                            Cadastrar
+                            Salvar
                         </Button>
                     </Modal.Footer>
                 </Modal>

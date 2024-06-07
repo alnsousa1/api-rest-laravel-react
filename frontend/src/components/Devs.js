@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Table, Form, Modal } from "react-bootstrap";
+import Swal from 'sweetalert2';
 
 class Devs extends React.Component {
     constructor(props) {
@@ -51,13 +52,50 @@ class Devs extends React.Component {
     }
 
     deletarDev = (id) => {
-        fetch("http://127.0.0.1:8000/api/v1/devs/" + id, { method: 'DELETE' })
-            .then(response => {
-                if (response.ok) {
-                    this.buscarDev();
-                }
-            })
-    }
+        Swal.fire({
+            title: 'Você tem certeza?',
+            text: "Você não poderá reverter isso!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Não, cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch("http://127.0.0.1:8000/api/v1/devs/" + id, { method: 'DELETE' })
+                    .then(response => {
+                        if (response.ok) {
+                            Swal.fire(
+                                'Excluído!',
+                                'O desenvolvedor foi excluído.',
+                                'success'
+                            );
+                            this.buscarDev();
+                        } else {
+                            Swal.fire(
+                                'Erro!',
+                                'Houve um problema ao excluir o desenvolvedor.',
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire(
+                            'Erro!',
+                            'Houve um problema ao excluir o desenvolvedor.',
+                            'error'
+                        );
+                    });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire(
+                    'Cancelado',
+                    'O desenvolvedor está seguro :)',
+                    'error'
+                );
+            }
+        });
+    };
 
     editarDev = (id) => {
         fetch("http://127.0.0.1:8000/api/v1/devs/" + id, { method: 'GET' })
@@ -85,6 +123,11 @@ class Devs extends React.Component {
             })
             .then(response => {
                 if (response.ok) {
+                    Swal.fire({
+                        title: "Sucesso!",
+                        text: "O desenvolvedor foi cadastrado com sucesso!",
+                        icon: "success"
+                    });
                     this.buscarDev();
                 } else {
                     alert("Não foi possível adicionar o desenvolvedor!");
@@ -101,6 +144,11 @@ class Devs extends React.Component {
             })
             .then(response => {
                 if (response.ok) {
+                    Swal.fire({
+                        title: "Sucesso!",
+                        text: "Os dados foram atualizados com sucesso!",
+                        icon: "success"
+                    });
                     this.buscarDev();
                 } else {
                     alert("Não foi possível editar os dados do desenvolvedor!");
@@ -110,13 +158,13 @@ class Devs extends React.Component {
 
     renderTabela() {
         return (
-            <Table striped bordered hover>
+            <Table striped bordered hover responsive>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
                         <th>Nível</th>
-                        <th>Opções</th>
+                        <th style={{ float: "right" }}>Opções</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -127,8 +175,8 @@ class Devs extends React.Component {
                                 <td>{dev.name}</td>
                                 <td>{dev.level_name}</td>
                                 <td>
-                                    <Button variant="primary" onClick={() => this.editarDev(dev.id)}>Editar</Button>
-                                    <Button variant="danger" onClick={() => this.deletarDev(dev.id)}>Excluir</Button>
+                                    <Button style={{ float: "right" }} variant="primary" onClick={() => this.editarDev(dev.id)}>Editar</Button>
+                                    <Button style={{ float: "right", marginRight: "10px" }} variant="danger" onClick={() => this.deletarDev(dev.id)}>Excluir</Button>
                                 </td>
                             </tr>
                         )
@@ -254,14 +302,14 @@ class Devs extends React.Component {
                             Cancelar
                         </Button>
                         <Button variant="primary" type="button" onClick={() => { this.submit() }}>
-                            Cadastrar
+                            Salvar
                         </Button>
                     </Modal.Footer>
                 </Modal>
                 <div className="m-2">
-                <Button variant="primary" type="button" onClick={() => { this.reset() }}>
-                    Novo
-                </Button>
+                    <Button variant="primary" type="button" onClick={() => { this.reset() }}>
+                        Novo
+                    </Button>
                 </div>
 
                 {this.renderTabela()}

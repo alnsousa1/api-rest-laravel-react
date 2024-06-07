@@ -7,8 +7,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
  
 function App() {
   return (
-    <div className="App">
-      <h1>Teste Gazin</h1>
+    <div style={{backgroundColor: "#fafafa"}} className="App">
+      <h1 className='m-2'>Teste Gazin</h1>
       <BrowserRouter>
       <Nav variant='tabs'>
         <Nav.Link as={Link} to={"/"}>Página inicial</Nav.Link>
@@ -25,5 +25,7 @@ function App() {
     </div>
   );
 }
+
+
 
 export default App;
