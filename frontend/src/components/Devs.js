@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Table, Form, Modal, Pagination } from "react-bootstrap";
 import Swal from 'sweetalert2';
+import { FaSort } from 'react-icons/fa';
 
 class Devs extends React.Component {
     constructor(props) {
@@ -220,7 +221,9 @@ class Devs extends React.Component {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th onClick={() => this.sortColumn('name')}>Nome</th>
+                            <th onClick={() => this.sortColumn('name')} style={{ cursor: 'pointer' }}>
+                                Nome <FaSort />
+                            </th>
                             <th>Nível</th>
                             <th style={{ float: "right" }}>Opções</th>
                         </tr>
