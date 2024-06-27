@@ -10,5 +10,5 @@ class Devs extends Model
     use HasFactory;
 
     protected $table = 'developers';
-    protected $fillable = ['nome', 'nascimento', 'sexo', 'data_nascimento', 'idade', 'hobby'];
+    protected $fillable = ['nome', 'id_level', 'sexo', 'data_nascimento', 'idade', 'hobby'];
 }

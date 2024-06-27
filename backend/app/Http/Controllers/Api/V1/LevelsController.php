@@ -23,7 +23,8 @@ class LevelsController extends Controller
     public function store(Request $request)
     {
         Levels::create($request->all());
-        return response()->json("Level Created");
+        return response()->json(['message' => 'Level Created']);
+
     }
 
     public function update(Request $request, $id)
@@ -37,6 +38,6 @@ class LevelsController extends Controller
     public function destroy(Levels $level)
     {
         $level->delete();
-        return response()->json("Level Deleted");
+        return response()->json(['message' => 'Level Deleted']);
     }
 }
