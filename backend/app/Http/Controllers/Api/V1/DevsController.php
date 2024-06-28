@@ -23,7 +23,7 @@ class DevsController extends Controller
     public function store(Request $request)
     {
         Devs::create($request->all());
-        return response()->json("Dev Created");
+        return response()->json(['message' => 'Dev Created']);
     }
 
     public function update(Request $request, $id)
@@ -37,6 +37,6 @@ class DevsController extends Controller
     public function destroy(Devs $dev)
     {
         $dev->delete();
-        return response()->json("Level Deleted");
+        return response()->json(['message' => 'Dev Deleted']);
     }
 }
