@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    volumes:
+      - ./backend:/var/www
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_KEY=base64:Mc33zetJFUQe3LaXtCNHJkz095iPIUshGbEfh52cDEs=
+      - DB_CONNECTION=mysql
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3312
+      - DB_DATABASE=api-laravel
+      - DB_USERNAME=root
+      - DB_PASSWORD=
+    ports:
+      - "8000:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - laravel
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    networks:
+      - laravel
+
+networks:
+  laravel:
