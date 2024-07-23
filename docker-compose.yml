@@ -17,6 +17,7 @@ services:
       - DB_DATABASE=api-laravel
       - DB_USERNAME=root
       - DB_PASSWORD=12345678
+      - COMPOSER_ALLOW_SUPERUSER=1
     volumes:
       - ./backend:/var/www/html
     ports:
