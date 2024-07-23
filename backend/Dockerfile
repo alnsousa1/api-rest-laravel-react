@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Utiliza a imagem oficial do PHP com Apache
 FROM php:8.2-apache
 
@@ -28,7 +27,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 # Expõe a porta 80
 EXPOSE 80
-=======
+
 # Etapa de build
 FROM composer:2 as build
 
@@ -62,4 +61,3 @@ RUN chown -R www-data:www-data /var/www \
 CMD php artisan serve --host=0.0.0.0 --port=8000
 
 EXPOSE 8000
->>>>>>> a18ef941d41c80395827c6dbf87b13679a1cd795
