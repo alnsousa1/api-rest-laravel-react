@@ -21,7 +21,7 @@ services:
     volumes:
       - ./backend:/var/www/html
     ports:
-      - "8000:80"
+      - "8000:8000"
     depends_on:
       - db
 
@@ -43,7 +43,7 @@ services:
       MYSQL_ROOT_PASSWORD: 12345678
       MYSQL_DATABASE: api-laravel
     ports:
-      - "3307:3306" # Alterando a porta mapeada no host para 3307
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
 
