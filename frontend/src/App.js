@@ -1,4 +1,5 @@
-import Cursos from './components/Cursos'
+import Devs from './components/Devs'
+import Levels from './components/Levels'
 import { BrowserRouter, Routes, Link, Route } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -7,15 +8,17 @@ function App() {
   return (
     <div className="App">
       <div>
-        <h1 className='m-2'>Gerenciador de Cursos</h1>
+        <h1 className='m-2'>Gerenciador de Devs</h1>
       </div>
       <BrowserRouter>
         <Nav variant='tabs' style={{background: '#fafafa'}}>
-          <Nav.Link as={Link} to={"/cursos"}>Cursos</Nav.Link>
+          <Nav.Link as={Link} to={"/devs"}>Desenvolvedores</Nav.Link>
+          <Nav.Link as={Link} to={"/levels"}>Níveis</Nav.Link>
         </Nav>
 
         <Routes>
-          <Route path='/cursos' element={<Cursos />}></Route>
+          <Route path='/devs' element={<Devs />}></Route>
+          <Route path='/levels' element={<Levels />}></Route>
         </Routes>
       </BrowserRouter>
     </div>
