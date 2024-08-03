@@ -395,7 +395,6 @@ class Devs extends React.Component {
                         Novo
                     </Button>
                 </div>
-
                 {this.renderTabela()}
             </div>
         )
