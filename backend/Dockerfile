@@ -27,7 +27,6 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 # Expõe a porta 80
 EXPOSE 80
-<<<<<<< HEAD
 
 # Etapa de build
 FROM composer:2 as build
@@ -62,5 +61,3 @@ RUN chown -R www-data:www-data /var/www \
 CMD php artisan serve --host=0.0.0.0 --port=8000
 
 EXPOSE 8000
-=======
->>>>>>> 3a291a67a719470ff4a1525171a7271b95b4a75c
