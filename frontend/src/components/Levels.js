@@ -15,6 +15,7 @@ class Levels extends React.Component {
             modalOpened: false,
             currentPage: 1,
             levelsPerPage: 10
+            
         }
     }
 
